@@ -260,8 +260,8 @@ locals {
 }
 
 data "cloudinit_config" "user_data" {
-  gzip = false
-  base64_encode = false
+  gzip = true
+  base64_encode = true
   dynamic "part" {
     for_each = local.cloudinit_templates
     content {
