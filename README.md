@@ -50,9 +50,11 @@ This module takes the following variables as input:
     - **ca_cert**: CA certificate that signed the remote fluentd node's server certificate (used to authentify it)
 **fluentbit_dynamic_config**: Optional configuration to update fluent-bit configuration dynamically either from an etcd key prefix or a path in a git repo.
   - **enabled**: Boolean flag to indicate whether dynamic configuration is enabled at all. If set to true, configurations will be set dynamically. The default configurations can still be referenced as needed by the dynamic configuration. They are at the following paths:
-    - **Global Service Configs**: /etc/fluent-bit-customization/default-config/fluent-bit-service.conf
-    - **Systemd Inputs**: /etc/fluent-bit-customization/default-config/fluent-bit-inputs.conf
-    - **Forward Output**: /etc/fluent-bit-customization/default-config/fluent-bit-output.conf
+    - **Global Service Configs**: /etc/fluent-bit-customization/default-config/service.conf
+    - **Default Variables**: /etc/fluent-bit-customization/default-config/default-variables.conf
+    - **Systemd Inputs**: /etc/fluent-bit-customization/default-config/inputs.conf
+    - **Forward Output For All Inputs**: /etc/fluent-bit-customization/default-config/output-all.conf
+    - **Forward Output For Default Inputs Only**: /etc/fluent-bit-customization/default-config/output-default-sources.conf
   - **source**: Indicates the source of the dynamic config. Can be either **etcd** or **git**.
   - **etcd**: Parameters to fetch fluent-bit configurations dynamically from an etcd cluster. It has the following keys:
     - **key_prefix**: Etcd key prefix to search for fluent-bit configuration
