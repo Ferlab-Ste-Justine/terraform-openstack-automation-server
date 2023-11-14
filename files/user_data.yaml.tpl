@@ -24,8 +24,36 @@ ssh_keys:
 %{ endif ~}
 %{ endif ~}
 
-%{ if length(bootstrap_configs) > 0 || length(bootstrap_secrets) > 0 ~}
+%{ if length(bootstrap_configs) > 0 || length(bootstrap_secrets) > 0 || pushgateway_client.tls.ca_cert != "" ~}
 write_files:
+#Pushgateway client creds
+%{ if pushgateway_client.tls.ca_cert != "" ~}
+  - path: /etc/pushgateway-client/ca.crt
+    owner: root:root
+    permissions: "0700"
+    content: |
+      ${indent(6, pushgateway_client.tls.ca_cert)}
+%{ endif ~}
+%{ if pushgateway_client.tls.client_cert != "" ~}
+  - path: /etc/pushgateway-client/client.crt
+    owner: root:root
+    permissions: "0700"
+    content: |
+      ${indent(6, pushgateway_client.tls.client_cert)}
+  - path: /etc/pushgateway-client/client.key
+    owner: root:root
+    permissions: "0700"
+    content: |
+      ${indent(6, pushgateway_client.tls.client_key)}
+%{ endif ~}
+%{ if pushgateway_client.basic_auth.username != "" ~}
+  - path: /etc/pushgateway-client/auth.yml
+    owner: root:root
+    permissions: "0700"
+    content: |
+      username: ${pushgateway_client.basic_auth.username}
+      password: ${pushgateway_client.basic_auth.password}
+%{ endif ~}
 #bootstrap configs
 %{ for config in bootstrap_configs ~}
   - path: ${config.path}
@@ -58,7 +86,7 @@ runcmd:
   - mv terraform /usr/local/bin/terraform
   - rm /tmp/terraform.zip
   #Install terracd
-  - curl -L https://github.com/Ferlab-Ste-Justine/terracd/releases/download/v0.13.0/terracd-linux-amd64.zip -o /tmp/terracd.zip
+  - curl -L https://github.com/Ferlab-Ste-Justine/terracd/releases/download/v0.14.0/terracd-linux-amd64.zip -o /tmp/terracd.zip
   - unzip /tmp/terracd.zip
   - mv linux-amd64/terracd /usr/local/bin/terracd
   - rm -r linux-amd64

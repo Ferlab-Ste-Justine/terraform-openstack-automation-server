@@ -11,12 +11,12 @@ locals {
 }
 
 module "prometheus_node_exporter_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//prometheus-node-exporter?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//prometheus-node-exporter?ref=v0.15.0"
   install_dependencies = var.install_dependencies
 }
 
 module "fluentbit_updater_etcd_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//configurations-auto-updater?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//configurations-auto-updater?ref=v0.15.0"
   install_dependencies = var.install_dependencies
   filesystem = {
     path = "/etc/fluent-bit-customization/dynamic-config"
@@ -50,7 +50,7 @@ module "fluentbit_updater_etcd_configs" {
 }
 
 module "fluentbit_updater_git_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//gitsync?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//gitsync?ref=v0.15.0"
   install_dependencies = var.install_dependencies
   filesystem = {
     path = "/etc/fluent-bit-customization/dynamic-config"
@@ -70,7 +70,7 @@ module "fluentbit_updater_git_configs" {
 }
 
 module "fluentbit_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//fluent-bit?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//fluent-bit?ref=v0.15.0"
   install_dependencies = var.install_dependencies
   fluentbit = {
     metrics = var.fluentbit.metrics
@@ -101,7 +101,7 @@ module "fluentbit_configs" {
 }
 
 module "systemd_remote_source_etcd_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//configurations-auto-updater?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//configurations-auto-updater?ref=v0.15.0"
   install_dependencies = var.install_dependencies
   filesystem = {
     path = var.systemd_remote.sync_directory
@@ -146,7 +146,7 @@ module "systemd_remote_source_etcd_configs" {
 }
 
 module "systemd_remote_source_git_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//gitsync?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//gitsync?ref=v0.15.0"
   install_dependencies = var.install_dependencies
   filesystem = {
     path = var.systemd_remote.sync_directory
@@ -177,20 +177,26 @@ module "systemd_remote_source_git_configs" {
 }
 
 module "systemd_remote_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//systemd-remote?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//systemd-remote?ref=v0.15.0"
   server = var.systemd_remote.server
   install_dependencies = var.install_dependencies
 }
 
 module "terraform_backend_etcd_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//terraform-backend-etcd?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//terraform-backend-etcd?ref=v0.15.0"
   server = var.terraform_backend_etcd.server
   etcd = var.terraform_backend_etcd.etcd
   install_dependencies = var.install_dependencies
 }
 
+module "pushgateway_configs" {
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//pushgateway?ref=v0.15.0"
+  pushgateway = var.pushgateway.server
+  install_dependencies = var.install_dependencies
+}
+
 module "chrony_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//chrony?ref=v0.12.0"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//chrony?ref=v0.15.0"
   install_dependencies = var.install_dependencies
   chrony = {
     servers  = var.chrony.servers
@@ -214,6 +220,7 @@ locals {
             bootstrap_secrets = var.bootstrap_secrets
             bootstrap_configs = var.bootstrap_configs
             bootstrap_services = var.bootstrap_services
+            pushgateway_client = var.pushgateway.client
           }
         )
       },
@@ -242,6 +249,11 @@ locals {
       filename     = "terraform_backend_etcd.cfg"
       content_type = "text/cloud-config"
       content      = module.terraform_backend_etcd_configs.configuration
+    }] : [],
+    var.pushgateway.enabled ? [{
+      filename     = "pushgateway.cfg"
+      content_type = "text/cloud-config"
+      content      = module.pushgateway_configs.configuration
     }] : [],
     var.chrony.enabled ? [{
       filename     = "chrony.cfg"

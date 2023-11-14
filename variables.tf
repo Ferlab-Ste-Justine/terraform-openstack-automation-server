@@ -203,6 +203,60 @@ variable "systemd_remote_source" {
   }
 }
 
+variable "pushgateway" {
+  description = "Parameters for prometheus pushgateway service."
+  type        = object({
+    enabled = bool
+    server  = object({
+      tls = object({
+        ca_cert     = string
+        server_cert = string
+        server_key  = string
+      })
+      basic_auth = object({
+        username        = string
+        hashed_password = string
+      })
+    })
+    client  = object({
+      tls = object({
+        ca_cert     = string
+        client_cert = string
+        client_key  = string
+      })
+      basic_auth = object({
+        username = string
+        password = string
+      })
+    })
+  })
+  default = {
+    enabled = false
+    server = {
+      tls = {
+        ca_cert = ""
+        server_cert = ""
+        server_key = ""
+      }
+      basic_auth = {
+        username = ""
+        hashed_password = ""
+      }
+    }
+    client = {
+      tls = {
+        ca_cert = ""
+        client_cert = ""
+        client_key = ""
+      }
+      basic_auth = {
+        username = ""
+        password = ""
+      }
+    }
+  }
+}
+
 variable "bootstrap_secrets" {
   description = "Secrets that boostrap the orchestration"
   sensitive = true

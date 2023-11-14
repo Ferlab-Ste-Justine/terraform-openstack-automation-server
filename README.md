@@ -136,6 +136,22 @@ This module takes the following variables as input:
       - **key**: Client's private key if certificate authentication is used.
       - **username**: Client's username if username/password authentication is used.
       - **password**: Client's password is username/password authentication is used.
+- **pushgateway**: Parameters to setup a prometheus pushgateway service that jobs can push metrics to. It should have the following keys:
+  - **enabled**: Boolean indicating whether the pushgateway should be setup.
+  - **server**: Server authentication parameters for the pushgateway service. It should have the following keys:
+    - **tls**: TLS (or mTLS) parameters for the pushgateway service.
+      - **ca_cert**: CA certificate used to authentify clients if they use certificate authentication (ie, mTLS)
+      - **server_cert**: Certificate for the pushgateway service
+      - **server_key**: Private key for the pushgateway service
+    - **basic_auth**: Parameters to authentify clients if they use password authentication. It should have the following keys:
+      - **username**: Username the client should use
+      - **hashed_password**: Password the client should use, hashed with bcrypt
+  - **client**: Client authentication parameters, made available on the server's filesystem for jobs wishing to push metrics on the pushgateway service.
+    - **tls**: TLS (or mTLS) parameters to authentify the pushgateway service and the client if it uses certificate authentication. It should have the following keys:
+      - **ca_cert**: CA certificate that clients will used to authentify the pushgateway service. It will be located at: **/etc/pushgateway-client/ca.crt**
+      - **client_cert**: Client certificate to authentify the client if using certificate authentication. It will be located at: **/etc/pushgateway-client/client.crt**
+      - **client_key**: Client private key to authentify the client if using certificate authentifcation. It will be located at: **/etc/pushgateway-client/client.key**
+    - **basic_auth**: Paramethers to authentify the client using password authentication. It should contain **username** and **password** fields and will create a yaml file containing the same keys at **/etc/pushgateway-client/auth.yml**
 
 ## Example
 
