@@ -76,6 +76,7 @@ write_files:
 packages:
   - curl
   - unzip
+  - iotop
 %{ endif ~}
 
 runcmd:
