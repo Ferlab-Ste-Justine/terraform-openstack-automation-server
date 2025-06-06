@@ -87,7 +87,7 @@ runcmd:
   - mv terraform /usr/local/bin/terraform
   - rm /tmp/terraform.zip
   #Install terracd
-  - curl -L https://github.com/Ferlab-Ste-Justine/terracd/releases/download/v0.14.0/terracd-linux-amd64.zip -o /tmp/terracd.zip
+  - curl -L https://github.com/Ferlab-Ste-Justine/terracd/releases/download/v0.15.0/terracd-linux-amd64.zip -o /tmp/terracd.zip
   - unzip /tmp/terracd.zip
   - mv linux-amd64/terracd /usr/local/bin/terracd
   - rm -r linux-amd64
